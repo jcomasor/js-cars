@@ -1,4 +1,5 @@
 import { Player } from "./player.js";
+import { Background } from "./background.js";
 
 window.addEventListener("load", function () {
   const canvas = document.getElementById("canvas");
@@ -11,22 +12,32 @@ window.addEventListener("load", function () {
       this.width = width;
       this.height = height;
       this.player = new Player(this);
+      this.background = new Background(this);
+      this.speed = 2;
+      this.gameFrame = 0;
     }
 
-    update() {}
+    update(deltaTime) {
+      this.background.update();
+    }
 
     draw(ctx) {
+      this.background.draw(ctx);
       this.player.draw(ctx);
     }
   }
 
   const game = new Game(canvas.width, canvas.height);
 
-  function animate() {
+  let lastTime = 0;
+  function animate(timeStamp) {
+    const deltaTime = timeStamp - lastTime;
+    lastTime = timeStamp;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    game.update();
+    game.update(deltaTime);
     game.draw(ctx);
     requestAnimationFrame(animate);
+    game.gameFrame--;
   }
-  animate();
+  animate(0);
 });
